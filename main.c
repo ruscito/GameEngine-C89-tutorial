@@ -1,6 +1,8 @@
 #include <stdio.h>
-#include <raylib.h>
+#include <GLFW/glfw3.h>
 #include "src/engine.h"
+
+Engine engine = {0};
 
 unsigned int initState1() {
   printf("state 1 created\n");
@@ -13,11 +15,12 @@ unsigned int updateState1(float deltatime) {
 }
 
 unsigned int drawState1(float deltatime) {
-    BeginDrawing();
-    ClearBackground(RAYWHITE);
-    DrawText("LOGO SCREEN", 20, 20, 40, LIGHTGRAY);
-    DrawText("WAIT for 2 SECONDS...", 290, 220, 20, GRAY);
-    EndDrawing();
+    /* Render here */
+    glClear(GL_COLOR_BUFFER_BIT);
+    /* Swap front and back buffers */
+    glfwSwapBuffers((&engine.graphics)->window);
+    /* Poll for and process events */
+    glfwPollEvents();    
     return 0;
 }
 
@@ -32,7 +35,6 @@ int main() {
   options.width = 480;
   options.height = 272;
 
-  Engine engine = {0};
   ENGINE_init(&engine, &options);
 
   State state1 = {0};
@@ -42,7 +44,7 @@ int main() {
   state1.destroy = destroyState1;
   STATEMANAGER_push(&engine.statemanager, &state1);
 
-  while (!WindowShouldClose()) {
+  while (!glfwWindowShouldClose((&engine.graphics)->window)) {
       STATEMANAGER_update(&engine.statemanager, 10.0f);
       STATEMANAGER_draw(&engine.statemanager, 10.0f);
   }
